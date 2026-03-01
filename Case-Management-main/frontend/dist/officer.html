@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus CMS - Officer Dashboard</title>
+    <title>Nexus CMS - Officer Dashboard</title>
+
+
     <style>
         body {
             display: grid;
@@ -449,7 +451,8 @@
             Verification Status <span class="icon">✓</span>
         </button>
     </aside>
-
+
+
     <script>
         // -----------------------------------------
         // 1. AUTH & INIT 
@@ -504,7 +507,7 @@
         // -----------------------------------------
         async function fetchMyCases() {
             try {
-                const res = await fetch("http://localhost:5000/api/cases/my-cases", {
+                const res = await fetch("https://lexx-1.onrender.com/api/cases/my-cases", {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
                 const response = await res.json();
@@ -539,7 +542,7 @@
 
         window.viewCaseDetails = async function (caseId) {
             try {
-                const res = await fetch(`http://localhost:5000/api/cases/${caseId}`, {
+                const res = await fetch(`https://lexx-1.onrender.com/api/cases/${caseId}`, {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
                 const data = await res.json();
@@ -586,7 +589,7 @@
 
         async function fetchEvidenceData() {
             try {
-                const res = await fetch("http://localhost:5000/api/evidence/my-evidence", {
+                const res = await fetch("https://lexx-1.onrender.com/evidence/my-evidence", {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
                 const response = await res.json();
@@ -625,7 +628,7 @@
 
         async function populateCaseDropdown() {
             try {
-                const res = await fetch("http://localhost:5000/api/cases/my-cases", {
+                const res = await fetch("https://lexx-1.onrender.com/api/cases/my-cases", {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
                 const response = await res.json();
@@ -652,7 +655,7 @@
             btn.disabled = true;
 
             try {
-                const res = await fetch("http://localhost:5000/api/cases", {
+                const res = await fetch("https://lexx-1.onrender.com/api/cases", {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
                     body: JSON.stringify({ title, description })
@@ -703,7 +706,7 @@
             btn.disabled = true;
 
             try {
-                const res = await fetch("http://localhost:5000/api/evidence/upload", {
+                const res = await fetch("https://lexx-1.onrender.com/api/evidence/upload", {
                     method: "POST",
                     headers: { "Authorization": `Bearer ${token}` }, // Form-Data automatically handles Content-Type and boundaries
                     body: formData

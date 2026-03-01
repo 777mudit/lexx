@@ -451,7 +451,7 @@
         async function fetchCases() {
             try {
                 // Judge fetches all cases
-                const res = await fetch("http://localhost:5000/api/cases/allCases", {
+                const res = await fetch("https://lexx-1.onrender.com/api/cases/allCases", {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
                 const response = await res.json();

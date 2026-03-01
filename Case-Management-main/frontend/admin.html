@@ -10,7 +10,7 @@
     <style>
         :root {
             /* Admin Theme Variables */
-            --primary-color: #8b5cf6;
+            --primary-cocalr: #8b5cf6;
             --accent-color: #22d3ee;
             --metallic-border: #333;
             --metallic-card: linear-gradient(145deg, rgba(20, 20, 20, 0.9), rgba(15, 15, 15, 0.9));
@@ -493,7 +493,7 @@
         async function fetchCases() {
             try {
                 // Admin fetches all cases
-                const res = await fetch("http://localhost:5000/api/cases", {
+                const res = await fetch("https://lexx-1.onrender.com/api/cases", {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
                 const response = await res.json();
@@ -502,7 +502,7 @@
                 const cases = Array.isArray(response) ? response : (response.data || []);
 
                 // Fetch Pending evidence
-                const evRes = await fetch("http://localhost:5000/api/evidence/pending", {
+                const evRes = await fetch("https://lexx-1.onrender.com/api/evidence/pending", {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
                 const evData = await evRes.json();
@@ -703,7 +703,7 @@
                 }
 
                 // Database Update
-                const res = await fetch(`http://localhost:5000/api/evidence/verify/${evidenceId}`, {
+                const res = await fetch(`https://lexx-1.onrender.com/api/evidence/verify/${evidenceId}`, {
                     method: "PATCH",
                     headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
                     body: JSON.stringify({ status })

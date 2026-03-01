@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 if (isRegisterMode) {
                     // Actual Registration
-                    const res = await fetch("http://localhost:5000/api/auth/register", {
+                    const res = await fetch("https://lexx-1.onrender.com/api/auth/register", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ name, email, password, role: currentRole, badgeId })
@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 } else {
                     // Actual Login
-                    const res = await fetch("http://localhost:5000/api/auth/login", {
+                    const res = await fetch("https://lexx-1.onrender.com/api/auth/login", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ email, password, role: currentRole })
