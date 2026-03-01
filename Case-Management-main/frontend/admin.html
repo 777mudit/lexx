@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus CMS - Admin Dashboard</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./animations.css">
+    <style>
+        :root {
+            /* Admin Theme Variables */
+            --primary-color: #8b5cf6;
+            --accent-color: #22d3ee;
+            --metallic-border: #333;
+            --metallic-card: linear-gradient(145deg, rgba(20, 20, 20, 0.9), rgba(15, 15, 15, 0.9));
+        }
+
+        body {
+            display: grid;
+            grid-template-columns: 260px 1fr 340px;
+            /* Wider right sidebar to accommodate cases list */
+            height: 100vh;
+            overflow: hidden;
+            background: #0a0a0a;
+        }
+
+        /* Left Sidebar */
+        .left-sidebar {
+            background: rgba(15, 15, 15, 0.95);
+            border-right: 1px solid var(--metallic-border);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+        }
+
+        .profile-card {
+            text-align: center;
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--metallic-border);
+            margin-bottom: 30px;
+        }
+
+        .profile-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--metallic-card);
+            margin: 0 auto 15px;
+            border: 2px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .profile-name {
+            font-size: 1.2rem;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .profile-role {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex-grow: 1;
+        }
+
+        .nav-link {
+            padding: 12px 15px;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .logout-btn {
+            margin-top: auto;
+            text-align: center;
+            color: #ff4d4d;
+            padding: 12px;
+            border: 1px solid #ff4d4d;
+            border-radius: 8px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            background: #ff4d4d;
+            color: #000;
+            box-shadow: 0 0 15px rgba(255, 77, 77, 0.4);
+        }
+
+        /* Right Sidebar - Cases Filter & List */
+        .right-sidebar {
+            background: rgba(15, 15, 15, 0.95);
+            border-left: 1px solid var(--metallic-border);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+        }
+
+        .sidebar-title {
+            color: #fff;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .badge {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 12px;
+        }
+
+        .btn-wallet {
+            background: var(--metallic-card);
+            border: 1px solid var(--primary-color);
+            padding: 12px;
+            border-radius: 10px;
+            color: #fff;
+            font-weight: 500;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+
+        .btn-wallet:hover {
+            background: rgba(139, 92, 246, 0.2);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 15px;
+            background: #0a0a0a;
+            border: 1px solid var(--metallic-border);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.9rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary-color);
+        }
+
+        .case-item {
+            background: rgba(20, 20, 20, 0.6);
+            border: 1px solid var(--metallic-border);
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s;
+        }
+
+        .case-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: #555;
+            transform: translateX(-5px);
+        }
+
+        .case-item.active {
+            background: rgba(139, 92, 246, 0.15);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .case-item-icon {
+            font-size: 1.2rem;
+            color: #64748b;
+        }
+
+        .case-item.active .case-item-icon {
+            color: var(--primary-color);
+        }
+
+        .case-item-title {
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+
+        .case-item-meta {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        /* Main Content Area */
+        .main-area {
+            position: relative;
+            padding: 40px;
+            overflow-y: auto;
+            background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.03), transparent 40%);
+        }
+
+        .panel-header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--metallic-border);
+        }
+
+        .panel-header h2 {
+            font-size: 2.5rem;
+            color: #fff;
+        }
+
+        .panel-header p {
+            color: var(--text-secondary);
+            margin-top: 10px;
+        }
+
+        /* Dark Mode Analysis Card */
+        .dash-form {
+            background: rgba(20, 20, 20, 0.5);
+            padding: 30px;
+            border: 1px solid var(--metallic-border);
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+            margin-bottom: 30px;
+        }
+
+        .top-section {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            margin-bottom: 20px;
+            background: rgba(10, 10, 10, 0.8);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #333;
+        }
+
+        .evidence-visual {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 120px;
+            border-right: 1px solid #333;
+            padding-right: 30px;
+        }
+
+        .shield-icon {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #60a5fa, #3b82f6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .view-link {
+            color: #3b82f6;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+
+        .view-link:hover {
+            text-decoration: underline;
+        }
+
+        .report-content {
+            background: rgba(10, 10, 10, 0.8);
+            padding: 24px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: #ccc;
+            margin-bottom: 24px;
+            border: 1px solid #333;
+            white-space: pre-wrap;
+        }
+
+        /* Parallel Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-approve {
+            background: #10b981;
+            color: #000;
+            border: none;
+        }
+
+        .btn-approve:hover {
+            background: #059669;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-approve:disabled {
+            background: #064e3b;
+            color: #aaa;
+            cursor: not-allowed;
+        }
+
+        .btn-reject {
+            background: transparent;
+            border: 1px solid #ef4444;
+            color: #ef4444;
+        }
+
+        .btn-reject:hover {
+            background: rgba(239, 68, 68, 0.1);
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+        }
+
+        .btn-reject:disabled {
+            border-color: #7f1d1d;
+            color: #7f1d1d;
+            cursor: not-allowed;
+        }
+
+        .pulse {
+            animation: pulseAnim 2s infinite;
+        }
+
+        @keyframes pulseAnim {
+            0% {
+                opacity: 0.6;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.6;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Left Sidebar -->
+    <aside class="left-sidebar slide-in-left visible">
+        <div class="profile-card">
+            <div class="profile-img">🛡️</div>
+            <div class="profile-name" id="user-name">Loading...</div>
+            <div class="profile-role" id="user-role">ID: ------</div>
+        </div>
+
+        <div class="nav-links">
+            <div class="nav-link"
+                style="color:#fff; background: rgba(255,255,255,0.05); border-left: 3px solid var(--primary-color);">
+                <span>📊</span> Dashboard Home
+            </div>
+        </div>
+
+        <div class="logout-btn" id="logout-action">Secure Logout</div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-area">
+        <div id="main-content-container">
+            <div class="panel-header">
+                <h2>Admin Oversight</h2>
+                <p>Select a case from the right dashboard to review forensic analysis and finalize evidence.</p>
+            </div>
+
+            <div
+                style="display:flex; justify-content:center; align-items:center; height: 300px; color: #666; flex-direction: column; text-align:center;">
+                <span style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;">🗂️</span>
+                <p>No Case Selected<br>Awaiting your review.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Right Sidebar / Case Filter -->
+    <aside class="right-sidebar slide-in-right visible">
+        <div class="sidebar-title">
+            <span>PENDING QUEUE</span>
+            <span class="badge" id="pending-count">0 Items</span>
+        </div>
+
+        <button class="btn-wallet" id="connect-wallet-btn">
+            <span style="font-size: 1.2rem;">🦊</span> Connect MetaMask
+        </button>
+        <div id="wallet-address"
+            style="color: #bbb; font-size: 0.8rem; text-align: center; margin-bottom: 5px; display: none;"></div>
+
+        <div class="search-box" style="margin-bottom: 5px; margin-top: 10px;">
+            <input type="text" id="case-search" placeholder="Filter cases...">
+        </div>
+
+        <div id="case-list-container" style="display: flex; flex-direction: column; gap: 10px; overflow-y: auto;">
+            <p style="color: #666; text-align: center; margin-top: 20px;">Loading cases...</p>
+        </div>
+    </aside>
+
+    <script type="module">
+        import { getContract, connectWallet } from "./web3Service.js";
+
+        // Global State
+        const token = localStorage.getItem("token");
+        const userStr = localStorage.getItem("user");
+        let activeCase = null;
+        let casesData = [];
+        let filteredCases = [];
+        let walletAddress = null;
+
+        // Init & Auth
+        if (!token || !userStr) {
+            alert("Unauthorized. Please login.");
+            window.location.href = "login.html";
+        }
+
+        let user;
+        try {
+            user = JSON.parse(userStr);
+            if (user.role !== 'admin') {
+                alert('Unauthorized: You must be an admin.');
+                window.location.href = 'index.html';
+            }
+            document.getElementById("user-name").innerText = user.name || user.email.split("@")[0];
+            document.getElementById("user-role").innerText = "ID: " + (user.badgeId || user._id?.slice(-6).toUpperCase() || "N/A");
+        } catch (e) { console.error(e); }
+
+        document.getElementById("logout-action").addEventListener("click", () => {
+            localStorage.clear();
+            window.location.href = "index.html";
+        });
+
+        // Web3 Connection
+        document.getElementById("connect-wallet-btn").addEventListener("click", async () => {
+            try {
+                walletAddress = await connectWallet();
+                const btn = document.getElementById("connect-wallet-btn");
+                btn.innerText = "Wallet Connected";
+                btn.style.borderColor = "#10b981";
+                btn.style.color = "#10b981";
+
+                const addrDisplay = document.getElementById("wallet-address");
+                addrDisplay.style.display = "block";
+                addrDisplay.innerText = `${walletAddress.substring(0, 6)}...${walletAddress.substring(38)}`;
+            } catch (error) {
+                console.error('Wallet connection rejected:', error);
+                alert(error.message || "Failed to connect wallet.");
+            }
+        });
+
+        // 3. API CALLS
+        async function fetchCases() {
+            try {
+                // Admin fetches all cases
+                const res = await fetch("http://localhost:5000/api/cases", {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const response = await res.json();
+
+                if (!res.ok) throw new Error(response.message || 'Failed to fetch cases');
+                const cases = Array.isArray(response) ? response : (response.data || []);
+
+                // Fetch Pending evidence
+                const evRes = await fetch("http://localhost:5000/api/evidence/pending", {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const evData = await evRes.json();
+                const pendingEvidenceList = Array.isArray(evData) ? evData : (evData.data || []);
+
+                // Map Pending evidence to cases
+                casesData = cases.map(c => {
+                    const caseEvs = pendingEvidenceList.filter(e => {
+                        return (e.caseId === c._id) || (e.caseId && e.caseId._id === c._id);
+                    });
+
+                    return { ...c, evidence: caseEvs, totalEvidence: caseEvs.length };
+                }).filter(c => c.evidence.length > 0);
+
+                filteredCases = [...casesData];
+                renderCaseList();
+            } catch (err) {
+                console.error(err);
+                document.getElementById("case-list-container").innerHTML = `<p style="color:red; text-align:center;">Error loading cases.</p>`;
+            }
+        }
+
+        // Render Cases in Right Sidebar
+        function renderCaseList() {
+            const container = document.getElementById("case-list-container");
+            document.getElementById("pending-count").innerText = `${filteredCases.reduce((acc, c) => acc + c.evidence.length, 0)} Items`;
+
+            if (filteredCases.length === 0) {
+                container.innerHTML = `<p style="color: #666; text-align: center; margin-top: 20px;">No pending cases found.</p>`;
+                return;
+            }
+
+            container.innerHTML = filteredCases.map(c => `
+                <div class="case-item ${activeCase && activeCase._id === c._id ? 'active' : ''}" data-id="${c._id}">
+                    <div class="case-item-icon">🗃️</div>
+                    <div style="flex-grow: 1;">
+                        <div class="case-item-title">${c.title}</div>
+                        <div class="case-item-meta">Contains ${c.evidence.length} forensic item(s)</div>
+                    </div>
+                </div>
+            `).join("");
+
+            document.querySelectorAll(".case-item").forEach(item => {
+                item.addEventListener("click", () => {
+                    const id = item.getAttribute("data-id");
+                    const targetCase = casesData.find(c => c._id === id);
+                    if (targetCase) {
+                        activeCase = targetCase;
+                        renderCaseList(); // Update active highlights
+                        renderActiveCase();
+                    }
+                });
+            });
+        }
+
+        // Search Implementation
+        document.getElementById("case-search").addEventListener("input", (e) => {
+            const val = e.target.value.toLowerCase();
+            filteredCases = casesData.filter(c => c.title.toLowerCase().includes(val));
+            renderCaseList();
+        });
+
+        // Render Case Details in Main Area
+        function renderActiveCase() {
+            const container = document.getElementById("main-content-container");
+
+            if (!activeCase || activeCase.evidence.length === 0) {
+                activeCase = null;
+                renderCaseList();
+                container.innerHTML = `
+                    <div class="panel-header">
+                        <h2>Admin Oversight</h2>
+                        <p>Select a case from the right dashboard to review forensic analysis and finalize evidence.</p>
+                    </div>
+                    <div style="display:flex; justify-content:center; align-items:center; height: 300px; color: #666; flex-direction: column; text-align:center;">
+                        <span style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;">🗂️</span>
+                        <p>No Case Selected<br>Awaiting your review.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `
+                <div class="panel-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <p style="color: var(--primary-color); font-weight: bold; font-size: 0.8rem; letter-spacing: 1px; margin-bottom: 5px;">CASE ANALYSIS</p>
+                        <h2 style="font-size: 2.5rem; margin-bottom: 5px;">${activeCase.title}</h2>
+                        <p style="color: #888;">Assigned Officer ID: ${activeCase.officerId?.badgeId || 'N/A'}</p>
+                    </div>
+                    <button id="btn-close-case" style="background: none; border: none; font-size: 2rem; color: #666; cursor: pointer;">&times;</button>
+                </div>
+            `;
+
+            activeCase.evidence.forEach(ev => {
+                let confStr = ev.aiAnalysis?.confidence || 'N/A';
+                let confValue = parseInt(confStr) || 0;
+                const reportText = ev.aiAnalysis?.report || "No detailed forensic analysis is available for this item.";
+
+                html += `
+                <div class="dash-form" id="ev-card-${ev._id}">
+                    <div class="top-section">
+                        <div class="evidence-visual">
+                            <div class="shield-icon">🛡️</div>
+                            <a href="${ev.fileUrl || '#'}" target="_blank" class="view-link">👁️ View Evidence</a>
+                        </div>
+                        <div style="flex-grow: 1;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span style="font-size: 0.85rem; color: #aaa; font-weight: bold;">AI CONFIDENCE <span style="color: #10b981; margin-left: 5px;">${confStr}</span></span>
+                            </div>
+                            <div style="height: 6px; background: #222; border-radius: 3px; overflow: hidden; width: 100%;">
+                                <div style="height: 100%; width: ${confValue}%; background: #3b82f6;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="report-content">${reportText}</div>
+
+                    <!-- Parellel Action Buttons -->
+                    <div class="action-buttons">
+                        <button class="btn-action btn-approve" data-id="${ev._id}">✓ Approve</button>
+                        <button class="btn-action btn-reject" data-id="${ev._id}">✕ Reject</button>
+                    </div>
+                </div>
+                `;
+            });
+
+            container.innerHTML = html;
+
+            document.getElementById("btn-close-case").addEventListener("click", () => {
+                activeCase = null;
+                renderCaseList();
+                renderActiveCase();
+            });
+
+            container.querySelectorAll('.btn-approve').forEach(btn => {
+                btn.addEventListener('click', () => handleVerification(btn.getAttribute('data-id'), 'Verified'));
+            });
+            container.querySelectorAll('.btn-reject').forEach(btn => {
+                btn.addEventListener('click', () => handleVerification(btn.getAttribute('data-id'), 'Rejected'));
+            });
+        }
+
+        // Action Handlers
+        async function handleVerification(evidenceId, status) {
+            if (status === 'Verified' && !walletAddress) {
+                alert("Please connect your MetaMask wallet in the right dashboard to approve evidence on-chain.");
+                return;
+            }
+
+            try {
+                const btnApprove = document.querySelector(`.btn-approve[data-id="${evidenceId}"]`);
+                const btnReject = document.querySelector(`.btn-reject[data-id="${evidenceId}"]`);
+                if (btnApprove) { btnApprove.disabled = true; btnApprove.innerText = "Encrypting File..."; }
+                if (btnReject) { btnReject.disabled = true; btnReject.innerText = "Processing..."; }
+
+                // Determine file hash and details
+                const targetEvidence = activeCase.evidence.find(e => e._id === evidenceId);
+                const fileHashStr = targetEvidence?.fileHash || "0x0000000000000000000000000000000000000000000000000000000000000000";
+
+                // Blockchain Transaction if Verified
+                if (status === 'Verified') {
+                    // Start Pinata secure upload process
+                    const { encryptAndUploadToPinata } = await import("./pinataService.js");
+
+                    if (btnApprove) btnApprove.innerText = "Pushing to Pinata IPFS...";
+                    const pinataRes = await encryptAndUploadToPinata(targetEvidence?.fileUrl || "", targetEvidence?.title || "evidence_file");
+                    const ipfsCID = pinataRes.ipfsCID;
+
+                    if (btnApprove) btnApprove.innerText = "Confirm Wallet Tx...";
+
+                    let contract;
+                    try {
+                        contract = getContract();
+                    } catch (err) {
+                        try {
+                            if (btnApprove) btnApprove.innerText = "Connecting Wallet...";
+                            await connectWallet();
+                            contract = getContract();
+                        } catch (walletErr) {
+                            throw new Error("Wallet connection required to perform On-Chain save.");
+                        }
+                    }
+                    if (!contract) throw new Error("Contract connection failed");
+
+                    // Prepare AI score
+                    let aiScore = 0;
+                    if (targetEvidence?.aiAnalysis?.confidence) {
+                        aiScore = parseInt(targetEvidence.aiAnalysis.confidence) || 0;
+                    }
+
+                    console.log("On-Chain Verification:", activeCase._id, evidenceId, fileHashStr, ipfsCID, aiScore);
+                    // Pass all 5 arguments defined in Web3 Interface Contract
+                    const tx = await contract.registerEvidence(activeCase._id, evidenceId, fileHashStr, ipfsCID, aiScore);
+
+                    if (btnApprove) btnApprove.innerText = "Writing to Chain...";
+                    await tx.wait();
+                    alert("File securely encrypted with Pinata and saved On-Chain!");
+                }
+
+                // Database Update
+                const res = await fetch(`http://localhost:5000/api/evidence/verify/${evidenceId}`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                    body: JSON.stringify({ status })
+                });
+
+                if (!res.ok) throw new Error("Failed DB update");
+                alert(`Evidence marked as ${status}.`);
+
+                // Update UI state
+                activeCase.evidence = activeCase.evidence.filter(e => e._id !== evidenceId);
+                if (activeCase.evidence.length === 0) {
+                    casesData = casesData.filter(c => c._id !== activeCase._id);
+                    filteredCases = filteredCases.filter(c => c._id !== activeCase._id);
+                    activeCase = null;
+                }
+
+                renderCaseList();
+                renderActiveCase();
+
+            } catch (error) {
+                console.error("Verification error:", error);
+                alert("An error occurred. Check console for details.");
+                renderActiveCase(); // reset buttons
+            }
+        }
+
+        // Fetch initialization
+        fetchCases();
+    </script>
+</body>
+
+</html>

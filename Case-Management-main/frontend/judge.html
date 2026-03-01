@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus CMS - Judicial Dashboard</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./animations.css">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --accent-color: #60a5fa;
+            --metallic-border: #333;
+            --metallic-card: linear-gradient(145deg, rgba(20, 20, 20, 0.9), rgba(15, 15, 15, 0.9));
+        }
+
+        body {
+            display: grid;
+            grid-template-columns: 260px 1fr 340px;
+            height: 100vh;
+            overflow: hidden;
+            background: #0a0a0a;
+        }
+
+        /* Sidebars */
+        .left-sidebar,
+        .right-sidebar {
+            background: rgba(15, 15, 15, 0.95);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+        }
+
+        .left-sidebar {
+            border-right: 1px solid var(--metallic-border);
+        }
+
+        .right-sidebar {
+            border-left: 1px solid var(--metallic-border);
+            overflow-y: auto;
+            gap: 15px;
+        }
+
+        .profile-card {
+            text-align: center;
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--metallic-border);
+            margin-bottom: 30px;
+        }
+
+        .profile-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--metallic-card);
+            margin: 0 auto 15px;
+            border: 2px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 0 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .profile-name {
+            font-size: 1.2rem;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .profile-role {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .btn-wallet {
+            background: var(--metallic-card);
+            border: 1px solid var(--primary-color);
+            padding: 12px;
+            border-radius: 10px;
+            color: #fff;
+            font-weight: 500;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+
+        .btn-wallet:hover {
+            background: rgba(37, 99, 235, 0.2);
+            box-shadow: 0 0 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .logout-btn {
+            margin-top: auto;
+            text-align: center;
+            color: #ff4d4d;
+            padding: 12px;
+            border: 1px solid #ff4d4d;
+            border-radius: 8px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            background: #ff4d4d;
+            color: #000;
+            box-shadow: 0 0 15px rgba(255, 77, 77, 0.4);
+        }
+
+        .sidebar-title {
+            color: #fff;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 15px;
+            background: #0a0a0a;
+            border: 1px solid var(--metallic-border);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.9rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary-color);
+        }
+
+        .case-item {
+            background: rgba(20, 20, 20, 0.6);
+            border: 1px solid var(--metallic-border);
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s;
+        }
+
+        .case-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: #555;
+            transform: translateX(-5px);
+        }
+
+        .case-item.active {
+            background: rgba(37, 99, 235, 0.15);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        /* Main Area */
+        .main-area {
+            position: relative;
+            padding: 40px;
+            overflow-y: auto;
+            background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.03), transparent 40%);
+        }
+
+        .panel-header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--metallic-border);
+        }
+
+        .panel-header h2 {
+            font-size: 2.5rem;
+            color: #fff;
+        }
+
+        .panel-header p {
+            color: var(--text-secondary);
+            margin-top: 10px;
+        }
+
+        .info-card {
+            background: rgba(20, 20, 20, 0.5);
+            padding: 24px;
+            border: 1px solid var(--metallic-border);
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #ccc;
+            background: rgba(10, 10, 10, 0.8);
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #444;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(24px);
+        }
+
+        .dash-form {
+            background: rgba(20, 20, 20, 0.5);
+            padding: 30px;
+            border: 1px solid var(--metallic-border);
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+            margin-bottom: 30px;
+        }
+
+        .btn-action {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #fff;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-finalize {
+            background: #10b981;
+            color: #000;
+            width: 100%;
+            justify-content: center;
+            padding: 18px;
+            font-size: 1.1rem;
+        }
+
+        .btn-finalize:hover {
+            background: #059669;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-finalize:disabled {
+            background: #064e3b;
+            color: #aaa;
+            cursor: not-allowed;
+        }
+
+        .btn-mark-false {
+            background: transparent;
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn-mark-false:hover {
+            background: rgba(239, 68, 68, 0.1);
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+        }
+
+        .btn-mark-false:disabled {
+            border-color: #7f1d1d;
+            color: #7f1d1d;
+            cursor: not-allowed;
+        }
+
+        .badge-chain {
+            background: #dcfce7;
+            color: #166534;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: auto;
+        }
+
+        .badge-false {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Left Sidebar -->
+    <aside class="left-sidebar slide-in-left visible">
+        <div class="profile-card">
+            <div class="profile-img">⚖️</div>
+            <div class="profile-name" id="user-name">Loading...</div>
+            <div class="profile-role" id="user-role">ID: ------</div>
+        </div>
+
+        <div class="nav-links">
+            <div class="nav-link"
+                style="color:#fff; background: rgba(255,255,255,0.05); border-left: 3px solid var(--primary-color);">
+                <span>📊</span> Judicial Review
+            </div>
+        </div>
+
+        <div class="logout-btn" id="logout-action">Secure Logout</div>
+    </aside>
+
+    <!-- Main area -->
+    <main class="main-area">
+        <div id="main-content-container">
+            <div class="panel-header">
+                <h2>Judicial Oversight</h2>
+                <p>Select a case to inspect evidence on-chain and finalize rulings.</p>
+            </div>
+
+            <div
+                style="display:flex; justify-content:center; align-items:center; height: 300px; color: #666; flex-direction: column; text-align:center;">
+                <span style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;">⚖️</span>
+                <p>No Case Selected<br>Awaiting your review.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Right Sidebar -->
+    <aside class="right-sidebar slide-in-right visible">
+        <div class="sidebar-title">
+            <span>REGISTERED CASES</span>
+            <span class="badge" style="color:#60a5fa; background:rgba(96,165,250,0.2)" id="total-count">0 Items</span>
+        </div>
+
+        <button class="btn-wallet" id="connect-wallet-btn">
+            <span style="font-size: 1.2rem;">🦊</span> Connect MetaMask
+        </button>
+        <div id="wallet-address"
+            style="color: #bbb; font-size: 0.8rem; text-align: center; margin-bottom: 5px; display: none;"></div>
+
+        <div class="search-box" style="margin-bottom: 5px; margin-top: 10px;">
+            <input type="text" id="case-search" placeholder="Filter cases by title...">
+        </div>
+
+        <div id="case-list-container" style="display: flex; flex-direction: column; gap: 10px; overflow-y: auto;">
+            <p style="color: #666; text-align: center; margin-top: 20px;">Loading cases...</p>
+        </div>
+    </aside>
+
+    <script type="module">
+        import { getContract, connectWallet, getEvidenceFromChain } from "./web3Service.js";
+
+        const token = localStorage.getItem("token");
+        const userStr = localStorage.getItem("user");
+        let activeCase = null;
+        let casesData = [];
+        let filteredCases = [];
+        let walletAddress = null;
+        let showOnlyOnChain = false;
+
+        if (!token || !userStr) {
+            window.location.href = "login.html";
+        }
+
+        let user;
+        try {
+            user = JSON.parse(userStr);
+            if (user.role !== 'judge') {
+                alert('Unauthorized: You must be a judge.');
+                window.location.href = 'index.html';
+            }
+            document.getElementById("user-name").innerText = `Hon. ${user.name || user.email.split("@")[0]}`;
+            document.getElementById("user-role").innerText = "ID: " + (user.badgeId || user._id?.slice(-6).toUpperCase() || "N/A");
+        } catch (e) { console.error(e); }
+
+        document.getElementById("logout-action").addEventListener("click", () => {
+            localStorage.clear();
+            window.location.href = "index.html";
+        });
+
+        document.getElementById("connect-wallet-btn").addEventListener("click", async () => {
+            try {
+                walletAddress = await connectWallet();
+                const btn = document.getElementById("connect-wallet-btn");
+                btn.innerText = "Wallet Connected";
+                btn.style.borderColor = "#60a5fa";
+                btn.style.color = "#60a5fa";
+
+                const addrDisplay = document.getElementById("wallet-address");
+                addrDisplay.style.display = "block";
+                addrDisplay.innerText = `${walletAddress.substring(0, 6)}...${walletAddress.substring(38)}`;
+
+                // Refresh active case on-chain details if a case is selected
+                if (activeCase) fetchOnChainDataForActiveCase();
+
+            } catch (error) {
+                console.error(error);
+                alert(error.message || "Failed to connect wallet.");
+            }
+        });
+
+        async function fetchCases() {
+            try {
+                // Judge fetches all cases
+                const res = await fetch("http://localhost:5000/api/cases/allCases", {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const response = await res.json();
+                if (!res.ok) throw new Error(response.message || 'Failed to fetch');
+
+                casesData = Array.isArray(response) ? response : [];
+                filteredCases = [...casesData];
+                renderCaseList();
+            } catch (err) {
+                console.error(err);
+                document.getElementById("case-list-container").innerHTML = `<p style="color:red; text-align:center;">Error loading cases.</p>`;
+            }
+        }
+
+        function renderCaseList() {
+            const container = document.getElementById("case-list-container");
+            document.getElementById("total-count").innerText = `${filteredCases.length} Items`;
+
+            if (filteredCases.length === 0) {
+                container.innerHTML = `<p style="color: #666; text-align: center; margin-top: 20px;">No cases found.</p>`;
+                return;
+            }
+
+            container.innerHTML = filteredCases.map(c => `
+                <div class="case-item ${activeCase && activeCase._id === c._id ? 'active' : ''}" data-id="${c._id}">
+                    <div class="case-item-icon" style="color: ${c.status === 'Closed' ? '#10b981' : '#64748b'}">
+                        ${c.status === 'Closed' ? '🔒' : '⚖️'}
+                    </div>
+                    <div style="flex-grow: 1;">
+                        <div class="case-item-title">${c.title}</div>
+                        <div class="case-item-meta">Evidence: ${c.evidenceList?.length || 0} | Status: ${c.status || 'Open'}</div>
+                    </div>
+                </div>
+            `).join("");
+
+            document.querySelectorAll(".case-item").forEach(item => {
+                item.addEventListener("click", () => {
+                    const id = item.getAttribute("data-id");
+                    const targetCase = casesData.find(c => c._id === id);
+                    if (targetCase) {
+                        activeCase = targetCase;
+                        renderCaseList();
+                        renderActiveCase();
+                        if (walletAddress) fetchOnChainDataForActiveCase();
+                    }
+                });
+            });
+        }
+
+        document.getElementById("case-search").addEventListener("input", (e) => {
+            const val = e.target.value.toLowerCase();
+            filteredCases = casesData.filter(c => c.title.toLowerCase().includes(val));
+            renderCaseList();
+        });
+
+        async function fetchOnChainDataForActiveCase() {
+            if (!activeCase || !activeCase.evidenceList || activeCase.evidenceList.length === 0) return;
+            let updated = false;
+
+            for (let ev of activeCase.evidenceList) {
+                try {
+                    const chainData = await getEvidenceFromChain(ev._id);
+                    // chainData[8] is exists, chainData[7] is status enum (0=Registered, 1=MarkedFalse)
+                    if (chainData && chainData[8]) {
+                        ev.onChain = true;
+                        ev.chainStatus = Number(chainData[7]) === 1 ? 'FALSE' : 'VALID';
+                        ev.ipfsCID = chainData[3] || '';
+                        updated = true;
+                    } else {
+                        ev.onChain = false;
+                    }
+                } catch (e) {
+                    // Ignore errors if not connected or completely unavailable
+                }
+            }
+            if (updated) renderActiveCase();
+        }
+
+        window.toggleFilter = function () {
+            showOnlyOnChain = !showOnlyOnChain;
+            renderActiveCase();
+        };
+
+        function renderActiveCase() {
+            const container = document.getElementById("main-content-container");
+
+            if (!activeCase) {
+                container.innerHTML = `
+                    <div class="panel-header"><h2>Judicial Oversight</h2></div>
+                    <div style="text-align:center; margin-top:100px; color:#666;">No case selected</div>
+                `;
+                return;
+            }
+
+            const evList = showOnlyOnChain
+                ? (activeCase.evidenceList || []).filter(e => e.onChain)
+                : (activeCase.evidenceList || []);
+
+            let html = `
+                <div class="panel-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <p style="color: var(--accent-color); font-weight: bold; font-size: 0.8rem; letter-spacing: 1px; margin-bottom: 5px;">RULING DASHBOARD</p>
+                        <h2 style="font-size: 2.5rem; margin-bottom: 5px;">${activeCase.title}</h2>
+                        <span style="color: #aaa; font-size: 0.9rem;">Status: 
+                            <span style="color:${activeCase.status === 'Closed' ? '#10b981' : '#f59e0b'}; font-weight:bold">${activeCase.status || 'Open'}</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div>
+                        <h3 style="color:#fff; margin-bottom:5px; font-size:1.1rem;">Reporting Officer Details</h3>
+                        <p style="color:#aaa; font-size:0.9rem; margin:2px 0;">Name: <strong style="color:#ddd">${activeCase.officer?.name || 'N/A'}</strong></p>
+                        <p style="color:#aaa; font-size:0.9rem; margin:2px 0;">Email: ${activeCase.officer?.email || 'N/A'}</p>
+                        <p style="color:#aaa; font-size:0.9rem; margin:2px 0;">Case Uploaded: ${new Date(activeCase.createdAt).toLocaleString()}</p>
+                    </div>
+                    <div>
+                        ${activeCase.status !== 'Closed' ?
+                    `<button class="btn-action btn-finalize" onclick="closeCase('${activeCase._id}')">🔒 Finalize & Close Case</button>
+                             <p style="color:#666; font-size:0.8rem; margin-top:8px; text-align:center;">Closes case off-chain</p>` :
+                    `<div style="color:#10b981; font-weight:bold; font-size:1.2rem;">Case Finalized</div>`
+                }
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                    <h3 style="color:#fff; font-size:1.3rem;">Evidences Uploaded</h3>
+                    <div class="toggle-container">
+                        <label class="switch">
+                            <input type="checkbox" onchange="toggleFilter()" ${showOnlyOnChain ? 'checked' : ''}>
+                            <span class="slider"></span>
+                        </label>
+                        <span>Show On-Chain Only</span>
+                    </div>
+                </div>
+            `;
+
+            if (evList.length === 0) {
+                html += `<div style="text-align:center; padding: 40px; color:#555; border:1px solid #222; border-radius:12px;">No evidence passes filter.</div>`;
+            } else {
+                evList.forEach(ev => {
+                    let chainBadge = ev.onChain
+                        ? (ev.chainStatus === 'FALSE' ? `<span class="badge-false">ON-CHAIN: FALSE</span>` : `<span class="badge-chain">ON-CHAIN: VALID</span>`)
+                        : `<span style="margin-left:auto; color:#666; font-size:0.8rem;">Off-Chain</span>`;
+
+                    html += `
+                    <div class="dash-form" style="display:flex; flex-direction:column; gap:15px; padding:20px;">
+                        <div style="display:flex; align-items:center;">
+                            <div style="font-size:1.5rem; margin-right:15px;">📄</div>
+                            <div>
+                                <h4 style="color:#fff; margin-bottom:4px;">${ev.title || 'Evidence Artifact'}</h4>
+                                <p style="color:#888; font-size:0.85rem; margin:0;">AI Confidence: <strong style="color:#60a5fa">${ev.aiAnalysis?.confidence || 'N/A'}</strong></p>
+                                ${ev.ipfsCID ? `<p style="color:#888; font-size:0.85rem; margin:4px 0 0 0;">IPFS: <a href="https://gateway.pinata.cloud/ipfs/${ev.ipfsCID}" target="_blank" style="color:#60a5fa; text-decoration:none;">${ev.ipfsCID.substring(0, 8)}...</a></p>` : ''}
+                            </div>
+                            ${chainBadge}
+                        </div>
+                        
+                        <div style="display:flex; gap:10px; margin-top:10px;">
+                            ${ev.fileUrl ? `<a href="${ev.fileUrl}" target="_blank" class="btn-action" style="background:#222; border:1px solid #444; flex:1; justify-content:center;">👁️ View File</a>` : ''}
+                            
+                            ${ev.onChain && ev.chainStatus !== 'FALSE' ? `
+                                <button class="btn-action btn-mark-false" onclick="markFalse('${ev._id}')" style="flex:1;">❌ Mark False On-Chain</button>
+                            ` : ''}
+                        </div>
+                    </div>
+                    `;
+                });
+            }
+
+            container.innerHTML = html;
+        }
+
+        window.closeCase = async function (id) {
+            if (!confirm("Are you sure you want to finalize and close this case? No more evidence can be uploaded.")) return;
+            try {
+                const res = await fetch(`http://localhost:5000/api/cases/${id}/close`, {
+                    method: 'PATCH',
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                if (!res.ok) throw new Error("Failed to close case");
+
+                alert("Case finalized successfully off-chain.");
+                // Update local state
+                activeCase.status = 'Closed';
+                const cIndex = casesData.findIndex(c => c._id === id);
+                if (cIndex > -1) casesData[cIndex].status = 'Closed';
+
+                renderCaseList();
+                renderActiveCase();
+            } catch (err) {
+                console.error(err);
+                alert("Error finalizing case.");
+            }
+        };
+
+        window.markFalse = async function (evId) {
+            if (!walletAddress) return alert("Please connect Web3 wallet to interact on-chain.");
+            if (!confirm("Are you sure you want to officially mark this evidence as FALSE on the blockchain?")) return;
+
+            try {
+                let contract;
+                try {
+                    contract = getContract();
+                } catch (e) {
+                    await connectWallet();
+                    contract = getContract();
+                }
+
+                alert("Please confirm the transaction in MetaMask to mark this evidence false.");
+                const tx = await contract.markEvidenceFalse(evId);
+                await tx.wait();
+                alert("Evidence successfully marked as FALSE on-chain!");
+
+                // Refresh UI via chain fetch
+                await fetchOnChainDataForActiveCase();
+
+            } catch (err) {
+                console.error(err);
+                alert("Blockchain transaction failed. " + err.message);
+            }
+        };
+
+        fetchCases();
+    </script>
+</body>
+
+</html>

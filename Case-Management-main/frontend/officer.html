@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus CMS - Officer Dashboard</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./animations.css">
+    <style>
+        body {
+            display: grid;
+            grid-template-columns: 260px 1fr 280px;
+            height: 100vh;
+            overflow: hidden;
+            background: #0a0a0a;
+        }
+
+        /* Left Sidebar */
+        .left-sidebar {
+            background: rgba(15, 15, 15, 0.95);
+            border-right: 1px solid var(--metallic-border);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+        }
+
+        .profile-card {
+            text-align: center;
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--metallic-border);
+            margin-bottom: 30px;
+        }
+
+        .profile-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--metallic-card);
+            margin: 0 auto 15px;
+            border: 2px solid var(--metallic-highlight);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+        }
+
+        .profile-name {
+            font-size: 1.2rem;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .profile-role {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex-grow: 1;
+        }
+
+        .nav-link {
+            padding: 12px 15px;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .logout-btn {
+            margin-top: auto;
+            text-align: center;
+            color: #ff4d4d;
+            padding: 12px;
+            border: 1px solid #ff4d4d;
+            border-radius: 8px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            background: #ff4d4d;
+            color: #000;
+            box-shadow: 0 0 15px rgba(255, 77, 77, 0.4);
+        }
+
+        /* Right Sidebar - Case Controller */
+        .right-sidebar {
+            background: rgba(15, 15, 15, 0.95);
+            border-left: 1px solid var(--metallic-border);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+        }
+
+        .sidebar-title {
+            color: #fff;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        .switch-btn {
+            background: var(--metallic-card);
+            border: 1px solid var(--metallic-border);
+            padding: 16px 20px;
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-weight: 500;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .switch-btn:hover {
+            border-color: var(--metallic-highlight);
+            transform: translateX(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .switch-btn.active {
+            background: #ededed;
+            color: #000;
+            border-color: #fff;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .switch-btn.active .icon {
+            color: #000;
+        }
+
+        .icon {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+        }
+
+        /* Main Content Area */
+        .main-area {
+            position: relative;
+            padding: 40px;
+            overflow-y: auto;
+            background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.03), transparent 40%);
+        }
+
+        .panel {
+            display: none;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        /* Generic Panel Inner Styling */
+        .panel-header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--metallic-border);
+        }
+
+        .panel-header h2 {
+            font-size: 2.5rem;
+            color: #fff;
+        }
+
+        .panel-header p {
+            color: var(--text-secondary);
+            margin-top: 10px;
+        }
+
+        /* Form Styles within panel */
+        .dash-form {
+            max-width: 600px;
+            background: rgba(20, 20, 20, 0.5);
+            padding: 30px;
+            border: 1px solid var(--metallic-border);
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 14px;
+            background: #0a0a0a;
+            border: 1px solid var(--metallic-border);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: var(--accent-color);
+            outline: none;
+        }
+
+        /* File Input Specific */
+        .file-drop-area {
+            border: 2px dashed var(--metallic-highlight);
+            padding: 40px;
+            text-align: center;
+            border-radius: 12px;
+            color: var(--text-secondary);
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .file-drop-area:hover {
+            border-color: #fff;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .file-drop-area input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* Grid for My Cases */
+        .cases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .case-card {
+            background: var(--metallic-card);
+            border: 1px solid var(--metallic-border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .case-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            border-color: var(--metallic-highlight);
+        }
+
+        .case-status {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: rgba(0, 255, 100, 0.1);
+            color: #00ff64;
+            margin-bottom: 15px;
+        }
+
+        .case-status.closed {
+            background: rgba(255, 77, 77, 0.1);
+            color: #ff4d4d;
+        }
+
+        @keyframes blurIn {
+            from {
+                filter: blur(10px);
+                opacity: 0;
+                transform: scale(0.98);
+            }
+
+            to {
+                filter: blur(0);
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .panel.active {
+            animation: blurIn 0.4s ease forwards;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Left Sidebar -->
+    <aside class="left-sidebar slide-in-left visible">
+        <div class="profile-card">
+            <div class="profile-img">👮</div>
+            <div class="profile-name" id="user-name">Loading...</div>
+            <div class="profile-role" id="user-role">ID: ------</div>
+        </div>
+
+        <div class="nav-links">
+            <div class="nav-link"><span>📊</span> Dashboard Home</div>
+        </div>
+
+        <div class="logout-btn" id="logout-action">Secure Logout</div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-area">
+
+        <!-- View: Dashboard Home / Create Case -->
+        <div id="panel-create" class="panel active">
+            <div class="panel-header">
+                <h2>Initiate Case File</h2>
+                <p>Register a new criminal or civil investigation to the global ledger.</p>
+            </div>
+            <form class="dash-form" id="create-case-form">
+                <div class="form-group">
+                    <label>Case Title / Designation</label>
+                    <input type="text" id="case-title" placeholder="Operation Midnight" required>
+                </div>
+                <div class="form-group">
+                    <label>Detailed Description</label>
+                    <textarea rows="5" id="case-desc"
+                        placeholder="Enter findings, timeline, and preliminary evidence descriptions..."
+                        required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" id="btn-submit-case">Register Case</button>
+            </form>
+        </div>
+
+        <!-- View: Upload Evidence -->
+        <div id="panel-upload" class="panel">
+            <div class="panel-header">
+                <h2>Evidence Upload System</h2>
+                <p>Securely transfer files. AI Forensics will automatically verify integrity.</p>
+            </div>
+            <form class="dash-form" id="upload-evidence-form">
+                <div class="form-group">
+                    <label>Select Associated Case</label>
+                    <select id="evidence-case-select" required>
+                        <option value="">-- Loading cases --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Evidence Alias / Title</label>
+                    <input type="text" id="evidence-title" placeholder="CCTV Footage - Alleyway" required>
+                </div>
+                <div class="form-group">
+                    <div class="file-drop-area">
+                        <span style="display:block; font-size: 2rem; margin-bottom: 10px;">☁️</span>
+                        <span id="file-name-hint">Drag & drop encrypted files here or click to browse.</span>
+                        <input type="file" id="evidence-file" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary shimmer">Upload
+                    & Analyze</button>
+            </form>
+        </div>
+
+        <!-- View: My Cases -->
+        <div id="panel-cases" class="panel">
+            <div class="panel-header">
+                <h2>Active Directorate</h2>
+                <p>Cases currently assigned to your jurisdiction.</p>
+            </div>
+            <div class="cases-grid" id="my-cases-container">
+                <p>Loading your cases...</p>
+            </div>
+        </div>
+
+        <!-- View: Reviews -->
+        <div id="panel-reviews" class="panel">
+            <div class="panel-header">
+                <h2>Reviews</h2>
+                <p>Detailed reports generated by Gemini 2.5 Flash regarding uploaded evidence.</p>
+            </div>
+            <div class="dash-form" style="max-width: 100%;">
+                <p>No new forensic analyses requiring your oversight today.</p>
+            </div>
+        </div>
+
+        <!-- View: Verification -->
+        <div id="panel-verification" class="panel">
+            <div class="panel-header">
+                <h2>Chain of Custody Verification</h2>
+                <p>Track admin verifications for evidence attached to your cases.</p>
+            </div>
+            <div class="dash-form" style="max-width: 100%;">
+                <p>Loading verification data...</p>
+            </div>
+        </div>
+
+        <!-- Case Details Modal -->
+        <div id="case-modal"
+            style="display:none; position:fixed; top:10%; left:15%; width:70%; max-height:80vh; overflow-y:auto; background:rgba(15,15,15,0.95); backdrop-filter:blur(10px); border:1px solid var(--metallic-border); z-index:100; border-radius:12px; padding:30px; box-shadow: 0 0 40px rgba(0,0,0,0.8);">
+            <div
+                style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #333; padding-bottom:10px; margin-bottom:20px;">
+                <h2 id="modal-title" style="color:#fff;">Case Details</h2>
+                <button onclick="document.getElementById('case-modal').style.display='none'"
+                    style="background:none;color:#aaa;border:none;font-size:2rem;cursor:pointer;">&times;</button>
+            </div>
+            <div id="modal-body" style="color:#ccc;"></div>
+        </div>
+
+    </main>
+
+    <!-- Right Sidebar / Case Management Switch -->
+    <aside class="right-sidebar slide-in-right visible">
+        <div class="sidebar-title">CASE TERMINAL</div>
+
+        <button class="switch-btn active" data-target="panel-create">
+            Create New Case <span class="icon">＋</span>
+        </button>
+        <button class="switch-btn" data-target="panel-upload">
+            Upload Evidence <span class="icon">↑</span>
+        </button>
+        <button class="switch-btn" data-target="panel-cases">
+            My Cases <span class="icon">📁</span>
+        </button>
+        <button class="switch-btn" data-target="panel-reviews">
+            Reviews <span class="icon">👁</span>
+        </button>
+        <button class="switch-btn" data-target="panel-verification">
+            Verification Status <span class="icon">✓</span>
+        </button>
+    </aside>
+
+    <script src="./main.js" type="module"></script>
+    <script>
+        // -----------------------------------------
+        // 1. AUTH & INIT 
+        // -----------------------------------------
+        const token = localStorage.getItem("token");
+        const userStr = localStorage.getItem("user");
+
+        if (!token || !userStr) {
+            alert("Unauthorized. Please login.");
+            window.location.href = "login.html";
+        }
+
+        let user;
+        try {
+            user = JSON.parse(userStr);
+            document.getElementById("user-name").innerText = user.name || user.email.split("@")[0];
+            document.getElementById("user-role").innerText = "ID: " + (user.badgeId || user._id?.slice(-6).toUpperCase() || "N/A");
+        } catch (e) { console.error(e); }
+
+        document.getElementById("logout-action").addEventListener("click", () => {
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            window.location.href = "index.html";
+        });
+
+        // -----------------------------------------
+        // 2. TAB SWITCHING
+        // -----------------------------------------
+        const switchBtns = document.querySelectorAll('.switch-btn');
+        const panels = document.querySelectorAll('.panel');
+
+        switchBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                switchBtns.forEach(b => b.classList.remove('active'));
+                panels.forEach(p => p.classList.remove('active'));
+
+                btn.classList.add('active');
+                const targetId = btn.getAttribute('data-target');
+                const targetPanel = document.getElementById(targetId);
+
+                setTimeout(() => { if (targetPanel) targetPanel.classList.add('active'); }, 10);
+
+                // Refresh data if specific tab is clicked
+                if (targetId === 'panel-cases') fetchMyCases();
+                if (targetId === 'panel-upload') populateCaseDropdown();
+                if (targetId === 'panel-reviews' || targetId === 'panel-verification') fetchEvidenceData();
+            });
+        });
+
+        // -----------------------------------------
+        // 3. API CALLS
+        // -----------------------------------------
+        async function fetchMyCases() {
+            try {
+                const res = await fetch("http://localhost:5000/api/cases/my-cases", {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const response = await res.json();
+                const container = document.getElementById("my-cases-container");
+                container.innerHTML = "";
+
+                if (!res.ok) {
+                    container.innerHTML = `<p style="color:red">Error: ${response.message}</p>`;
+                    return;
+                }
+
+                const cases = response.data || [];
+                if (cases.length === 0) {
+                    container.innerHTML = `<p>No active cases found in your jurisdiction.</p>`;
+                    return;
+                }
+
+                cases.forEach(c => {
+                    const d = new Date(c.updatedAt || c.createdAt).toLocaleString();
+                    const statusClass = c.status === "Closed" ? "case-status closed" : "case-status";
+                    container.innerHTML += `
+                    <div class="case-card hover-lift" style="cursor:pointer;" onclick="window.viewCaseDetails('${c._id}')">
+                        <div class="${statusClass}">${c.status}</div>
+                        <h3>${c.title}</h3>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 10px 0;">${c.description.substring(0, 50)}...</p>
+                        <div style="font-size: 0.8rem; color: #666;">Updated: ${d}</div>
+                    </div>
+                    `;
+                });
+            } catch (err) { console.error(err); }
+        }
+
+        window.viewCaseDetails = async function (caseId) {
+            try {
+                const res = await fetch(`http://localhost:5000/api/cases/${caseId}`, {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await res.json();
+
+                if (!res.ok) {
+                    alert("Error: " + data.message);
+                    return;
+                }
+
+                const c = data.case;
+                const evs = data.evidence || [];
+
+                document.getElementById('modal-title').innerText = c.title;
+
+                let evHTML = "";
+                if (evs.length === 0) {
+                    evHTML = "<p>No evidence appended.</p>";
+                } else {
+                    evHTML = evs.map(e => `
+                        <div style="border:1px solid #333; padding:15px; margin-bottom:10px; border-radius:8px; background:rgba(0,0,0,0.5);">
+                            <h4 style="color:#fff;">${e.title}</h4>
+                            <p style="font-size:0.8rem; color:#aaa;">Status: <span style="color:${e.verificationStatus === 'Verified' ? '#00ff64' : (e.verificationStatus === 'Rejected' ? '#ff4d4d' : 'yellow')}">${e.verificationStatus}</span></p>
+                            ${e.fileUrl ? `<a href="${e.fileUrl}" target="_blank" style="color:skyblue; font-size:0.9rem; text-decoration:underline;">View Attachment</a>` : ''}
+                            <div style="margin-top:10px; background:#111; padding:10px; border-radius:5px; font-size:0.85rem; border-left:3px solid #666;">
+                                <strong style="color:#fff;">AI Forensic Analysis:</strong><br/>
+                                <span style="color:#aaa;">Confidence Score: ${e.aiAnalysis?.confidence ?? 'N/A'}</span><br/>
+                                <p style="margin-top:5px; white-space:pre-wrap; color:#ddd;">${e.aiAnalysis?.report || 'Analysis pending...'}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+
+                document.getElementById('modal-body').innerHTML = `
+                    <p style="margin-bottom:15px; color:#aaa;"><strong>Status:</strong> <span style="color:#fff;">${c.status}</span></p>
+                    <p style="margin-bottom:25px; line-height:1.6;">${c.description}</p>
+                    <h3 style="border-bottom:1px solid #444; padding-bottom:10px; margin-bottom:15px; color:#fff;">Linked Evidence</h3>
+                    ${evHTML}
+                `;
+
+                document.getElementById('case-modal').style.display = 'block';
+
+            } catch (e) { console.error(e); alert("Failed to fetch case details."); }
+        }
+
+        async function fetchEvidenceData() {
+            try {
+                const res = await fetch("http://localhost:5000/api/evidence/my-evidence", {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const response = await res.json();
+
+                const reviewsContainer = document.querySelector("#panel-reviews .dash-form");
+                const verificationContainer = document.querySelector("#panel-verification .dash-form");
+
+                if (res.ok && response.data) {
+                    const evs = response.data;
+
+                    if (evs.length > 0) {
+                        reviewsContainer.innerHTML = evs.map(e => `
+                            <div style="margin-bottom:15px; padding-bottom:15px; border-bottom:1px solid #333;">
+                                <strong style="color:#fff;">${e.title} (${e.caseId?.title || 'Unknown Case'})</strong><br/>
+                                <span style="font-size:0.8rem; color:#888;">AI Confidence: ${e.aiAnalysis?.confidence ?? 'N/A'}</span>
+                                <p style="margin-top:5px; font-size:0.9rem;">${(e.aiAnalysis?.report || 'Processing...').substring(0, 150)}...</p>
+                            </div>
+                        `).join('');
+
+                        verificationContainer.innerHTML = evs.map(e => {
+                            let color = 'yellow';
+                            if (e.verificationStatus === 'Verified') color = '#00ff64';
+                            else if (e.verificationStatus === 'Rejected') color = '#ff4d4d';
+                            return `<div style="display: flex; justify-content: space-between; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 15px;">
+                                    <span>${e.title} (${e.caseId?.title || 'Unknown'})</span>
+                                    <span style="color: ${color};">${e.verificationStatus}</span>
+                                </div>`;
+                        }).join('');
+                    } else {
+                        reviewsContainer.innerHTML = "<p>No new forensic analyses requiring your oversight today.</p>";
+                        verificationContainer.innerHTML = "<p>No verifications pending for your cases.</p>";
+                    }
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        async function populateCaseDropdown() {
+            try {
+                const res = await fetch("http://localhost:5000/api/cases/my-cases", {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const response = await res.json();
+                const select = document.getElementById("evidence-case-select");
+
+                if (res.ok && response.data) {
+                    const openCases = response.data.filter(c => c.status === "Open");
+                    select.innerHTML = '<option value="">-- Select an Open Case --</option>';
+                    openCases.forEach(c => {
+                        select.innerHTML += `<option value="${c._id}">${c.title} (Open)</option>`;
+                    });
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        // CREATE CASE
+        document.getElementById("create-case-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById("btn-submit-case");
+            const title = document.getElementById("case-title").value;
+            const description = document.getElementById("case-desc").value;
+
+            btn.innerText = "Registering...";
+            btn.disabled = true;
+
+            try {
+                const res = await fetch("http://localhost:5000/api/cases", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                    body: JSON.stringify({ title, description })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert("Case Registered Successfully!");
+                    document.getElementById("create-case-form").reset();
+                    // Auto-load updated case list
+                    fetchMyCases();
+                    populateCaseDropdown();
+                } else {
+                    alert("Failed: " + data.message);
+                }
+            } catch (err) { console.error(err); alert("Network Error"); }
+
+            btn.innerText = "Register Case";
+            btn.disabled = false;
+        });
+
+        // UPLOAD EVIDENCE UI UPDATE
+        document.getElementById("evidence-file").addEventListener("change", function (e) {
+            const hint = document.getElementById("file-name-hint");
+            if (e.target.files.length > 0) {
+                hint.innerText = "Selected File: " + e.target.files[0].name;
+            } else {
+                hint.innerText = "Drag & drop encrypted files here or click to browse.";
+            }
+        });
+
+        // UPLOAD EVIDENCE
+        document.getElementById("upload-evidence-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const caseId = document.getElementById("evidence-case-select").value;
+            const title = document.getElementById("evidence-title").value;
+            const fileInput = document.getElementById("evidence-file");
+            const btn = document.querySelector("#upload-evidence-form button[type='submit']");
+
+            if (!caseId) return alert("Please select a case.");
+            if (!fileInput.files.length) return alert("Please select a file.");
+
+            const formData = new FormData();
+            formData.append("caseId", caseId);
+            formData.append("title", title);
+            formData.append("file", fileInput.files[0]);
+
+            btn.innerText = "Analyzing Forensics...";
+            btn.disabled = true;
+
+            try {
+                const res = await fetch("http://localhost:5000/api/evidence/upload", {
+                    method: "POST",
+                    headers: { "Authorization": `Bearer ${token}` }, // Form-Data automatically handles Content-Type and boundaries
+                    body: formData
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert("Evidence verified and appended to chain of custody!");
+                    document.getElementById("upload-evidence-form").reset();
+                } else {
+                    alert("Upload Failed: " + data.message);
+                }
+            } catch (err) { console.error(err); alert("Network Error during forensic upload."); }
+
+            btn.innerText = "Upload & Analyze";
+            btn.disabled = false;
+        });
+
+        // Initialize display
+        fetchMyCases();
+        populateCaseDropdown();
+    </script>
+</body>
+
+</html>
